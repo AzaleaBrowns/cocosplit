@@ -15,9 +15,10 @@ parser.add_argument('--having-annotations', dest='having_annotations', action='s
 
 args = parser.parse_args()
 
-def save_coco(file, images, annotations, categories):
+def save_coco(file, info, licenses, images, annotations, categories):
     with open(file, 'wt', encoding='UTF-8') as coco:
-        json.dump({'images': images, 'annotations': annotations, 'categories': categories}, coco, indent=2, sort_keys=True)
+        json.dump({ 'info': info, 'licenses': licenses, 'images': images, 
+            'annotations': annotations, 'categories': categories}, coco, indent=2, sort_keys=True)
 
 def filter_annotations(annotations, images):
     image_ids = funcy.lmap(lambda i: int(i['id']), images)
@@ -26,6 +27,8 @@ def filter_annotations(annotations, images):
 def main(args):
     with open(args.annotations, 'rt', encoding='UTF-8') as annotations:
         coco = json.load(annotations)
+        info = coco['info']
+        licenses = coco['licenses']
         images = coco['images']
         annotations = coco['annotations']
         categories = coco['categories']
@@ -39,8 +42,8 @@ def main(args):
 
         x, y = train_test_split(images, train_size=args.split)
 
-        save_coco(args.train, x, filter_annotations(annotations, x), categories)
-        save_coco(args.test, y, filter_annotations(annotations, y), categories)
+        save_coco(args.train, info, licenses, x, filter_annotations(annotations, x), categories)
+        save_coco(args.test, info, licenses, y, filter_annotations(annotations, y), categories)
 
         print("Saved {} entries in {} and {} in {}".format(len(x), args.train, len(y), args.test))
 
