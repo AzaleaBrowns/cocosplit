@@ -15,9 +15,9 @@ parser.add_argument('--having-annotations', dest='having_annotations', action='s
 
 args = parser.parse_args()
 
-def save_coco(file, info, licenses, images, annotations, categories):
+def save_coco(file, images, annotations, categories):
     with open(file, 'wt', encoding='UTF-8') as coco:
-        json.dump({'images': images, 
+        json.dump({ 'images': images, 
             'annotations': annotations, 'categories': categories}, coco, indent=2, sort_keys=True)
 
 def filter_annotations(annotations, images):
